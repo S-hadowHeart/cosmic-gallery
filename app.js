@@ -6,8 +6,20 @@ var logger = require('morgan');
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const fs = require('fs');
+const path = require('path');
 
-require('dotenv').config(); // Make sure you have dotenv if you're using a .env file
+// Read .env content manually
+const envPath = '/etc/secrets/.env';
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath).toString();
+  envContent.split('\n').forEach(line => {
+    const [key, value] = line.split('=');
+    if (key && value) {
+      process.env[key.trim()] = value.trim();
+    }
+  });
+}
+
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
