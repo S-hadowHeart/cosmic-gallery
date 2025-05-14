@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= user.name %>'s Profile - Pinterest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+  <!-- Stars Background -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Navigation -->
+  <nav class="nav-space shadow-lg">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/images/cosmic-gallery-logo.png" alt="Cosmic Gallery Logo" class="h-12 drop-shadow-lg animate-pulse">
+            <span class="text-2xl font-extrabold text-space-accent tracking-widest glow-text">COSMIC GALLERY</span>
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <% if (user) { %>
+            <a href="/profile/<%= user._id %>" class="flex items-center space-x-2">
+              <img src="/uploads/profiles/<%= user.profileImage %>" alt="Profile" class="w-8 h-8 rounded-full object-cover border-2 border-space-primary">
+              <span class="text-space-text"><%= user.name %></span>
+            </a>
+            <a href="/logout" class="btn-space-secondary px-4 py-2 rounded-full">
+              Logout
+            </a>
+          <% } else { %>
+            <a href="/login" class="btn-space-secondary px-4 py-2 rounded-full">
+              Log in
+            </a>
+            <a href="/signup" class="btn-space-primary px-4 py-2 rounded-full">
+              Sign up
+            </a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Profile Header -->
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="card-space rounded-xl p-6 mb-8 float-animation">
+      <div class="flex items-center space-x-6">
+        <img src="/uploads/profiles/<%= user.profileImage %>" alt="<%= user.name %>" class="w-24 h-24 rounded-full object-cover border-4 border-space-primary">
+        <div>
+          <h1 class="text-2xl font-bold text-space-text"><%= user.name %></h1>
+          <p class="text-space-text opacity-80"><%= user.bio || 'No bio yet' %></p>
+          <% if (isOwnProfile) { %>
+            <div class="mt-4 space-x-4">
+              <a href="/settings" class="btn-space-secondary px-4 py-2 rounded-full">
+                Edit Profile
+              </a>
+              <a href="/create-post" class="btn-space-primary px-4 py-2 rounded-full">
+                Launch Star
+              </a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex space-x-4 mb-6">
+      <button onclick="showTab('posts')" class="px-4 py-2 font-medium text-space-primary border-b-2 border-space-primary">
+        Stars
+      </button>
+      <% if (isOwnProfile) { %>
+        <button onclick="showTab('likes')" class="px-4 py-2 font-medium text-space-text opacity-60 hover:opacity-100">
+          Admired Stars
+        </button>
+      <% } %>
+      <button onclick="showTab('collections')" class="px-4 py-2 font-medium text-space-text opacity-60 hover:opacity-100">
+        Constellations
+      </button>
+    </div>
+
+    <!-- Posts Section -->
+    <div id="posts-section" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <% if (posts.length > 0) { %>
+        <% posts.forEach(post => { %>
+          <div class="card-space rounded-xl overflow-hidden relative">
+            <a href="/post/<%= post._id %>" class="block">
+              <div class="relative">
+                <img src="/uploads/posts/<%= post.image %>" alt="<%= post.title %>" class="w-full h-48 object-cover">
+                <div class="absolute bottom-2 right-2 flex items-center space-x-2 bg-space-card backdrop-blur-sm px-2 py-1 rounded-full">
+                  <svg class="w-5 h-5 text-space-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                  <span class="text-sm text-space-text"><%= post.likes ? post.likes.length : 0 %></span>
+                </div>
+                <% if (isOwnProfile) { %>
+                  <div class="absolute top-2 right-2 flex space-x-2 z-10">
+                    <a href="/edit-post/<%= post._id %>" class="btn-space-secondary px-3 py-1 text-xs flex items-center gap-1"><i class="fas fa-pen"></i>Edit</a>
+                    <form action="/delete-post/<%= post._id %>" method="POST" onsubmit="return confirm('Are you sure you want to remove this star?');">
+                      <button type="submit" class="btn-space-secondary px-3 py-1 text-xs flex items-center gap-1"><i class="fas fa-trash"></i>Remove</button>
+                    </form>
+                  </div>
+                <% } %>
+              </div>
+              <div class="p-4">
+                <h3 class="text-lg font-semibold mb-2 text-space-text"><%= post.title %></h3>
+                <p class="text-space-text opacity-80 text-sm mb-4 line-clamp-2"><%= post.caption %></p>
+                <% if (post.tags && post.tags.length > 0) { %>
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <% post.tags.forEach(tag => { %>
+                      <a href="/?tag=<%= tag %>" class="tag-space text-xs px-2 py-1 rounded-full">#<%= tag %></a>
+                    <% }) %>
+                  </div>
+                <% } %>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-space-text opacity-60"><%= new Date(post.createdAt).toLocaleDateString() %></span>
+                </div>
+              </div>
+            </a>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="col-span-full text-center py-12">
+          <p class="text-space-text opacity-80 text-lg">No stars yet</p>
+          <% if (isOwnProfile) { %>
+            <a href="/create-post" class="text-space-accent hover:text-space-primary mt-2 inline-block">Launch your first star</a>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Collections Section -->
+    <div id="collections-section" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <% if (collections && collections.length > 0) { %>
+        <% collections.forEach(collection => { %>
+          <a href="/collection/<%= collection._id %>" class="card-space rounded-xl overflow-hidden">
+            <div class="relative">
+              <% if (collection.posts && collection.posts.length > 0) { %>
+                <img src="/uploads/posts/<%= collection.posts[0].image %>" alt="<%= collection.name %>" class="w-full h-48 object-cover">
+              <% } else { %>
+                <div class="w-full h-48 bg-space-card flex items-center justify-center">
+                  <svg class="w-12 h-12 text-space-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                  </svg>
+                </div>
+              <% } %>
+              <% if (collection.isPrivate) { %>
+                <div class="absolute top-2 right-2 bg-space-card backdrop-blur-sm px-2 py-1 rounded-full">
+                  <svg class="w-5 h-5 text-space-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
+                </div>
+              <% } %>
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold mb-2 text-space-text"><%= collection.name %></h3>
+              <p class="text-space-text opacity-80 text-sm mb-4 line-clamp-2"><%= collection.description || 'No description' %></p>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-space-text opacity-60"><%= collection.posts ? collection.posts.length : 0 %> stars</span>
+                <span class="text-sm text-space-text opacity-60"><%= new Date(collection.createdAt).toLocaleDateString() %></span>
+              </div>
+            </div>
+          </a>
+        <% }) %>
+      <% } else { %>
+        <div class="col-span-full text-center py-12">
+          <p class="text-space-text opacity-80 text-lg">No constellations yet</p>
+          <% if (isOwnProfile) { %>
+            <a href="/collections" class="text-space-accent hover:text-space-primary mt-2 inline-block">Create your first constellation</a>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Liked Posts Section -->
+    <% if (isOwnProfile) { %>
+      <div id="likes-section" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <% if (likedPosts && likedPosts.length > 0) { %>
+          <% likedPosts.forEach(post => { %>
+            <a href="/post/<%= post._id %>" class="card-space rounded-xl overflow-hidden">
+              <div class="relative">
+                <img src="/uploads/posts/<%= post.image %>" alt="<%= post.title %>" class="w-full h-48 object-cover">
+                <div class="absolute bottom-2 right-2 flex items-center space-x-2 bg-space-card backdrop-blur-sm px-2 py-1 rounded-full">
+                  <svg class="w-5 h-5 text-space-secondary fill-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                  <span class="text-sm text-space-text"><%= post.likes ? post.likes.length : 0 %></span>
+                </div>
+              </div>
+              <div class="p-4">
+                <h3 class="text-lg font-semibold mb-2 text-space-text"><%= post.title %></h3>
+                <p class="text-space-text opacity-80 text-sm mb-4 line-clamp-2"><%= post.caption %></p>
+                <% if (post.tags && post.tags.length > 0) { %>
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <% post.tags.forEach(tag => { %>
+                      <a href="/?tag=<%= tag %>" class="tag-space text-xs px-2 py-1 rounded-full">#<%= tag %></a>
+                    <% }) %>
+                  </div>
+                <% } %>
+                <div class="flex items-center justify-between">
+                  <a href="/profile/<%= post.user._id %>" class="flex items-center space-x-2" onclick="event.stopPropagation()">
+                    <img src="/uploads/profiles/<%= post.user.profileImage %>" alt="<%= post.user.name %>" class="w-8 h-8 rounded-full object-cover border border-space-primary">
+                    <span class="text-sm text-space-text"><%= post.user.name %></span>
+                  </a>
+                </div>
+              </div>
+            </a>
+          <% }) %>
+        <% } else { %>
+          <div class="col-span-full text-center py-12">
+            <p class="text-space-text opacity-80 text-lg">No admired stars yet</p>
+            <a href="/" class="text-space-accent hover:text-space-primary mt-2 inline-block">Explore stars</a>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    function showTab(tabName) {
+      // Hide all sections
+      document.getElementById('posts-section').classList.add('hidden');
+      if (document.getElementById('likes-section')) {
+        document.getElementById('likes-section').classList.add('hidden');
+      }
+      if (document.getElementById('collections-section')) {
+        document.getElementById('collections-section').classList.add('hidden');
+      }
+      
+      // Show selected section
+      document.getElementById(tabName + '-section').classList.remove('hidden');
+      
+      // Update tab styles
+      const tabs = document.querySelectorAll('button');
+      tabs.forEach(tab => {
+        if (tab.textContent.toLowerCase().includes(tabName)) {
+          tab.classList.add('text-space-primary', 'border-b-2', 'border-space-primary');
+          tab.classList.remove('text-space-text', 'opacity-60');
+        } else {
+          tab.classList.remove('text-space-primary', 'border-b-2', 'border-space-primary');
+          tab.classList.add('text-space-text', 'opacity-60');
+        }
+      });
+    }
+
+    // Create stars background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      const starCount = 100;
+
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Random position
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        
+        // Random size
+        const size = Math.random() * 2;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        
+        // Random animation duration
+        star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
+        
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // Initialize stars on page load
+    window.addEventListener('load', createStars);
+  </script>
+</body>
+</html>

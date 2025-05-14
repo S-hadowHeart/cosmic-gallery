@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cosmic Gallery - Pinterest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #09091a 0%, #13132b 40%, #1a1a40 80%, #2d1b4c 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .glass {
+      background: rgba(20, 20, 40, 0.7);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(8px);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen text-space-text">
+  <!-- Stars Background -->
+  <div id="stars" class="fixed inset-0 z-0"></div>
+
+  <!-- Navigation -->
+  <nav class="nav-space glass sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div class="flex items-center gap-4 flex-1">
+        <a href="/" class="flex items-center gap-3">
+          <img src="/images/cosmic-gallery-logo.png" alt="Cosmic Gallery Logo" class="h-12 drop-shadow-lg animate-pulse">
+          <span class="text-2xl font-extrabold text-space-accent tracking-widest glow-text">COSMIC GALLERY</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-3 flex-wrap justify-end w-full sm:w-auto">
+        <% if (user) { %>
+          <a href="/create-post" class="btn-space-primary flex items-center gap-2 rounded-full shadow-md px-6 py-2 font-medium min-w-[140px] justify-center"><i class="fas fa-plus"></i>Launch Star</a>
+          <a href="/logout" class="btn-space-secondary flex items-center gap-2 rounded-full shadow-md px-6 py-2 font-medium min-w-[140px] justify-center"><i class="fas fa-sign-out-alt"></i>Exit Orbit</a>
+          <a href="/profile/<%= user._id %>" class="flex items-center gap-2 hover:text-space-accent ml-2">
+            <img src="/uploads/profiles/<%= user.profileImage %>" alt="Profile" class="w-8 h-8 rounded-full border-2 border-space-accent object-cover">
+            <span><%= user.name %></span>
+          </a>
+        <% } else { %>
+          <a href="/login" class="btn-space-primary rounded-full shadow-md">Enter Cosmos</a>
+          <a href="/signup" class="btn-space-secondary rounded-full shadow-md">Join Galaxy</a>
+        <% } %>
+      </div>
+    </div>
+    <div class="max-w-4xl mx-auto px-4 pb-3 flex gap-2 overflow-x-auto justify-center">
+      <a href="/" class="inline-block px-4 py-2 font-medium text-space-text bg-space-primary bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all"><i class="fas fa-globe mr-2"></i>All Galaxies</a>
+      <% if (locals.popularTags && popularTags.length > 0) { %>
+        <% popularTags.forEach(tag => { %>
+          <a href="/?tag=<%= tag %>" class="inline-block px-4 py-2 font-medium text-space-text bg-space-primary bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all"><i class="fas fa-hashtag mr-1"></i><%= tag %></a>
+        <% }) %>
+      <% } %>
+    </div>
+  </nav>
+
+  <!-- Search Bar -->
+  <div class="flex justify-center mt-10 mb-8 z-10 relative">
+    <form action="/" method="GET" class="w-full max-w-xl relative">
+      <input type="text" name="q" placeholder="Search the cosmos..." value="<%= locals.query ? query : '' %>"
+        class="input-space w-full px-5 py-4 pl-12 rounded-full bg-space-bg text-space-text border border-space-primary focus:ring-2 focus:ring-space-accent text-lg shadow-lg">
+      <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-space-accent opacity-80"></i>
+    </form>
+  </div>
+
+  <!-- Posts Grid -->
+  <main class="max-w-7xl mx-auto px-4 pb-16">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+      <% posts.forEach(post => { %>
+        <div class="glass card-space group rounded-2xl overflow-hidden shadow-2xl border border-space-primary hover:border-space-accent transition-all duration-300">
+          <a href="/post/<%= post._id %>" class="block">
+            <div class="relative">
+              <img src="/uploads/posts/<%= post.image %>" alt="<%= post.title %>" class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300">
+              <div class="absolute top-3 left-3 flex items-center gap-2 bg-space-card/80 px-3 py-1 rounded-full shadow">
+                <% if (post.tags && post.tags.length > 0) { %>
+                  <% post.tags.slice(0,2).forEach(tag => { %>
+                    <span class="text-xs text-space-accent">#<%= tag %></span>
+                  <% }) %>
+                <% } %>
+              </div>
+              <% if (user && String(user._id) === String(post.user._id)) { %>
+                <form action="/delete-post/<%= post._id %>" method="POST" onsubmit="return confirm('Are you sure you want to remove this star?');" class="absolute top-3 right-3 z-10">
+                  <button type="submit" class="bg-space-secondary bg-opacity-80 hover:bg-opacity-100 text-white rounded-full p-2 shadow-lg transition-all" title="Remove Star">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </form>
+              <% } %>
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-space-text mb-1 line-clamp-1"><%= post.title %></h3>
+              <p class="text-space-text opacity-80 text-sm mb-3 line-clamp-2"><%= post.caption %></p>
+              <div class="flex items-center justify-between mt-2">
+                <a href="/profile/<%= post.user._id %>" class="flex items-center gap-2 hover:text-space-accent">
+                  <img src="/uploads/profiles/<%= post.user.profileImage %>" alt="<%= post.user.name %>" class="w-7 h-7 rounded-full border border-space-accent object-cover">
+                  <span class="text-sm"><%= post.user.name %></span>
+                </a>
+                <div class="flex items-center gap-3">
+                  <span class="flex items-center gap-1 text-space-secondary"><i class="fas fa-heart"></i> <%= post.likes.length %></span>
+                  <span class="flex items-center gap-1 text-space-accent"><i class="fas fa-comment"></i> <%= post.comments ? post.comments.length : 0 %></span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      <% }) %>
+    </div>
+    <% if (posts.length === 0) { %>
+      <div class="text-center py-20">
+        <div class="text-space-text text-6xl mb-4"><i class="fas fa-rocket"></i></div>
+        <h2 class="text-2xl font-bold text-space-text mb-2">No Stars Found</h2>
+        <p class="text-space-text opacity-80">Be the first to launch a star in this cosmic space!</p>
+        <% if (user) { %>
+          <a href="/create-post" class="btn-space-primary mt-4 inline-block transition-all duration-200 hover:scale-105"><i class="fas fa-plus mr-2"></i>Launch New Star</a>
+        <% } else { %>
+          <a href="/login" class="btn-space-primary mt-4 inline-block transition-all duration-200 hover:scale-105">Enter Cosmos to Launch</a>
+        <% } %>
+      </div>
+    <% } %>
+  </main>
+
+  <!-- Footer -->
+  <footer class="px-6 py-6 text-center text-sm text-space-text opacity-60 relative z-10">
+    <p>&copy; 2025 Cosmic Gallery, Inc.</p>
+    <p class="mt-2 text-xs">A universe of inspiration awaits.</p>
+  </footer>
+
+  <script>
+    // Create stars background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      const starCount = 120;
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        const size = Math.random() * 2.2 + 0.5;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
+        starsContainer.appendChild(star);
+      }
+    }
+    window.addEventListener('load', createStars);
+  </script>
+</body>
+</html>

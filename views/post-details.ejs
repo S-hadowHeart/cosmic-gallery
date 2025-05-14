@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= post.title %> - Pinterest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+  <!-- Stars Background -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Navigation -->
+  <nav class="nav-space glass sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+      <div class="flex items-center gap-4">
+        <a href="/" class="flex items-center gap-3">
+          <img src="/images/cosmic-gallery-logo.png" alt="Cosmic Gallery Logo" class="h-12 drop-shadow-lg animate-pulse">
+          <span class="text-2xl font-extrabold text-space-accent tracking-widest glow-text">COSMIC GALLERY</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-3 flex-wrap justify-center">
+        <% if (user) { %>
+          <a href="/profile/<%= user._id %>" class="flex items-center gap-2 hover:text-space-accent">
+            <img src="/uploads/profiles/<%= user.profileImage %>" alt="Profile" class="w-8 h-8 rounded-full border-2 border-space-accent object-cover">
+            <span><%= user.name %></span>
+          </a>
+          <a href="/logout" class="btn-space-secondary flex items-center gap-2"><i class="fas fa-sign-out-alt"></i>Exit Orbit</a>
+        <% } else { %>
+          <a href="/login" class="btn-space-primary">Enter Cosmos</a>
+          <a href="/signup" class="btn-space-secondary">Join Galaxy</a>
+        <% } %>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="card-space rounded-xl overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <!-- Image Section -->
+        <div class="relative">
+          <img src="/uploads/posts/<%= post.image %>" alt="<%= post.title %>" class="w-full h-full object-cover">
+          <div class="absolute bottom-4 right-4">
+            <a href="/uploads/posts/<%= post.image %>" download class="btn-space-secondary px-4 py-2 rounded-full backdrop-blur-sm">
+              Download
+            </a>
+          </div>
+        </div>
+
+        <!-- Content Section -->
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+              <img src="/uploads/profiles/<%= post.user.profileImage %>" alt="<%= post.user.name %>" class="w-10 h-10 rounded-full border-2 border-space-primary">
+              <div>
+                <h2 class="font-semibold text-space-text"><%= post.user.name %></h2>
+                <p class="text-sm text-space-text opacity-60">Posted <%= new Date(post.createdAt).toLocaleDateString() %></p>
+              </div>
+            </div>
+            <% if (user) { %>
+              <div class="flex items-center space-x-2">
+                <form action="/like/<%= post._id %>" method="POST" class="inline">
+                  <button type="submit" class="flex items-center space-x-1 text-space-text hover:text-space-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="<%= post.likes.includes(user._id) ? 'currentColor' : 'none' %>" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    <span><%= post.likes.length %></span>
+                  </button>
+                </form>
+                <button onclick="showSaveModal()" class="flex items-center space-x-1 text-space-text hover:text-space-accent">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                  <span>Save</span>
+                </button>
+              </div>
+            <% } %>
+          </div>
+
+          <h1 class="text-2xl font-bold mb-2 text-space-text"><%= post.title %></h1>
+          <p class="text-space-text opacity-80 mb-4"><%= post.caption %></p>
+
+          <!-- Tags -->
+          <div class="mb-6">
+            <% post.tags.forEach(tag => { %>
+              <a href="/?tag=<%= tag %>" class="tag-space inline-block px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                #<%= tag %>
+              </a>
+            <% }) %>
+          </div>
+
+          <!-- Stardust Section -->
+          <div class="border-t border-space-primary border-opacity-20 pt-4">
+            <h3 class="font-semibold mb-4 text-space-text">Stardust</h3>
+            <% if (user) { %>
+              <form action="/comment/<%= post._id %>" method="POST" class="mb-6">
+                <div class="flex space-x-2">
+                  <input type="text" name="content" placeholder="Send stardust..." required
+                    class="input-space flex-1 px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-space-primary">
+                  <button type="submit" class="btn-space-primary px-4 py-2 rounded-full">
+                    Send Stardust
+                  </button>
+                </div>
+              </form>
+            <% } %>
+
+            <div class="space-y-4">
+              <% if (post.comments && post.comments.length > 0) { %>
+                <% post.comments.forEach(comment => { %>
+                  <div class="flex space-x-3">
+                    <img src="/uploads/profiles/<%= comment.user.profileImage %>" alt="<%= comment.user.name %>" class="w-8 h-8 rounded-full border border-space-primary">
+                    <div>
+                      <div class="bg-space-card backdrop-blur-sm rounded-lg px-4 py-2">
+                        <p class="font-semibold text-sm text-space-text"><%= comment.user.name %></p>
+                        <p class="text-space-text opacity-80"><%= comment.content %></p>
+                      </div>
+                      <p class="text-xs text-space-text opacity-60 mt-1">
+                        <%= new Date(comment.createdAt).toLocaleDateString() %>
+                      </p>
+                    </div>
+                  </div>
+                <% }) %>
+              <% } else { %>
+                <p class="text-space-text opacity-60 text-center">No stardust yet</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Similar Stars Section -->
+  <% if (similarPosts && similarPosts.length > 0) { %>
+    <div class="max-w-6xl mx-auto px-4 py-8">
+      <h2 class="text-2xl font-bold mb-6 text-space-text">Similar Stars</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <% similarPosts.forEach(similarPost => { %>
+          <a href="/post/<%= similarPost._id %>" class="card-space rounded-xl overflow-hidden">
+            <div class="relative">
+              <img src="/uploads/posts/<%= similarPost.image %>" alt="<%= similarPost.title %>" class="w-full h-48 object-cover">
+              <div class="absolute bottom-2 right-2 flex items-center space-x-2 bg-space-card backdrop-blur-sm px-2 py-1 rounded-full">
+                <svg class="w-5 h-5 text-space-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+                <span class="text-sm text-space-text"><%= similarPost.likes ? similarPost.likes.length : 0 %></span>
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold mb-2 text-space-text"><%= similarPost.title %></h3>
+              <p class="text-space-text opacity-80 text-sm mb-4 line-clamp-2"><%= similarPost.caption %></p>
+              <div class="flex items-center justify-between">
+                <a href="/profile/<%= similarPost.user._id %>" class="flex items-center space-x-2" onclick="event.stopPropagation()">
+                  <img src="/uploads/profiles/<%= similarPost.user.profileImage %>" alt="<%= similarPost.user.name %>" class="w-8 h-8 rounded-full object-cover border border-space-primary">
+                  <span class="text-sm text-space-text"><%= similarPost.user.name %></span>
+                </a>
+              </div>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Save to Constellation Modal -->
+  <% if (user) { %>
+    <div id="saveModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center backdrop-blur-sm">
+      <div class="card-space rounded-xl p-6 max-w-md w-full mx-4">
+        <h2 class="text-xl font-bold mb-4 text-space-text">Save to Constellation</h2>
+        <form action="/save-post/<%= post._id %>" method="POST">
+          <div class="mb-4">
+            <label class="block text-space-text text-sm font-bold mb-2" for="collectionId">
+              Select Constellation
+            </label>
+            <select name="collectionId" id="collectionId" required
+              class="input-space w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-space-primary">
+              <option value="">Choose a constellation</option>
+              <% collections.forEach(collection => { %>
+                <option value="<%= collection._id %>"><%= collection.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="flex justify-end space-x-4">
+            <button type="button" onclick="hideSaveModal()"
+              class="btn-space-secondary px-4 py-2 rounded-full">
+              Cancel
+            </button>
+            <button type="submit"
+              class="btn-space-primary px-4 py-2 rounded-full">
+              Save
+            </button>
+          </div>
+        </form>
+        <div class="mt-4 text-center">
+          <a href="/collections" class="text-space-accent hover:text-space-primary">
+            Create new constellation
+          </a>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <script>
+    function showSaveModal() {
+      document.getElementById('saveModal').classList.remove('hidden');
+      document.getElementById('saveModal').classList.add('flex');
+    }
+
+    function hideSaveModal() {
+      document.getElementById('saveModal').classList.add('hidden');
+      document.getElementById('saveModal').classList.remove('flex');
+    }
+
+    // Create stars background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      const starCount = 100;
+
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Random position
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        
+        // Random size
+        const size = Math.random() * 2;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        
+        // Random animation duration
+        star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
+        
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // Initialize stars on page load
+    window.addEventListener('load', createStars);
+  </script>
+</body>
+</html> 

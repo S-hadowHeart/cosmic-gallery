@@ -1,0 +1,30 @@
+<!-- Navigation -->
+<nav class="bg-white shadow-md">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center">
+        <a href="/" class="flex items-center">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png" alt="Pinterest Logo" class="h-8 w-auto">
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <% if (user) { %>
+          <a href="/collections" class="text-gray-700 hover:text-red-500">
+            Collections
+          </a>
+          <a href="/profile/<%= user._id %>" class="flex items-center space-x-2">
+            <img src="/uploads/profiles/<%= user.profileImage %>" alt="Profile" class="w-8 h-8 rounded-full object-cover">
+            <span class="text-gray-700"><%= user.name %></span>
+          </a>
+        <% } else { %>
+          <a href="/login" class="px-4 py-2 font-medium border border-red-500 text-red-500 rounded-full hover:bg-red-50">
+            Log in
+          </a>
+          <a href="/signup" class="px-4 py-2 font-medium bg-red-500 text-white rounded-full hover:bg-red-600">
+            Sign up
+          </a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav> 

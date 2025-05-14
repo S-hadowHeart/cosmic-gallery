@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Launch Star - Pinterest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+  <!-- Stars Background -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Navigation -->
+  <nav class="nav-space shadow-lg">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <a href="/" class="flex items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png" alt="Pinterest Logo" class="h-8 w-auto">
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="/profile/<%= user._id %>" class="flex items-center space-x-2">
+            <img src="/uploads/profiles/<%= user.profileImage %>" alt="Profile" class="w-8 h-8 rounded-full object-cover border-2 border-space-primary">
+            <span class="text-space-text"><%= user.name %></span>
+          </a>
+          <a href="/logout" class="btn-space-secondary px-4 py-2 rounded-full">
+            Exit Orbit
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="card-space rounded-xl p-8">
+      <h1 class="text-2xl font-bold mb-6 text-space-text">Launch a New Star</h1>
+
+      <% if (messages.error) { %>
+        <div class="bg-space-secondary bg-opacity-20 text-space-text p-4 rounded-lg mb-6">
+          <%= messages.error %>
+        </div>
+      <% } %>
+
+      <form action="/create-post" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <div>
+          <label for="title" class="block text-space-text text-sm font-medium mb-2">Star Name</label>
+          <input type="text" id="title" name="title" required
+            class="input-space w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-space-primary"
+            placeholder="Give your star a name">
+        </div>
+
+        <div>
+          <label for="caption" class="block text-space-text text-sm font-medium mb-2">Cosmic Message</label>
+          <textarea id="caption" name="caption" rows="4" required
+            class="input-space w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-space-primary"
+            placeholder="Share your cosmic thoughts"></textarea>
+        </div>
+
+        <div>
+          <label for="tags" class="block text-space-text text-sm font-medium mb-2">Galactic Tags</label>
+          <input type="text" id="tags" name="tags"
+            class="input-space w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-space-primary"
+            placeholder="Add cosmic tags separated by commas">
+          <p class="mt-1 text-sm text-space-text opacity-60">Example: nebula, galaxy, cosmos</p>
+        </div>
+
+        <div>
+          <label for="image" class="block text-space-text text-sm font-medium mb-2">Cosmic Image</label>
+          <input type="file" id="image" name="image" accept="image/*" required
+            class="input-space w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-space-primary">
+        </div>
+
+        <div class="flex justify-end space-x-4">
+          <a href="/" class="btn-space-secondary px-6 py-2 rounded-lg">
+            Return to Orbit
+          </a>
+          <button type="submit" class="btn-space-primary px-6 py-2 rounded-lg">
+            Launch Star
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Create stars background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      const starCount = 100;
+
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Random position
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        
+        // Random size
+        const size = Math.random() * 2;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        
+        // Random animation duration
+        star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
+        
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // Initialize stars on page load
+    window.addEventListener('load', createStars);
+  </script>
+</body>
+</html> 

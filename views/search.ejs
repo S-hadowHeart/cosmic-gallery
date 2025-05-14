@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Results - Pinterest Clone</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+  <!-- Stars Background -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Navigation -->
+  <nav class="nav-space shadow-lg">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <a href="/" class="flex items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png" alt="Pinterest Logo" class="h-8 w-auto">
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <% if (user) { %>
+            <a href="/create-post" class="btn-space-primary px-4 py-2 rounded-full">
+              Create Post
+            </a>
+            <a href="/profile/<%= user._id %>" class="flex items-center space-x-2">
+              <img src="/uploads/profiles/<%= user.profileImage %>" alt="Profile" class="w-8 h-8 rounded-full object-cover border-2 border-space-primary">
+              <span class="text-space-text"><%= user.name %></span>
+            </a>
+            <a href="/logout" class="btn-space-secondary px-4 py-2 rounded-full">
+              Logout
+            </a>
+          <% } else { %>
+            <a href="/login" class="btn-space-primary px-4 py-2 rounded-full">
+              Login
+            </a>
+            <a href="/signup" class="btn-space-secondary px-4 py-2 rounded-full">
+              Sign Up
+            </a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Search Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-space-text mb-2">
+        Search Results for "<%= query %>"
+      </h1>
+      <p class="text-space-text opacity-60">
+        Found <%= posts.length %> results
+      </p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-8">
+      <form action="/search" method="GET" class="max-w-2xl">
+        <div class="relative">
+          <input type="text" name="q" placeholder="Search for posts..." 
+            class="input-space w-full px-4 py-3 pl-12 rounded-full focus:outline-none focus:ring-2 focus:ring-space-primary"
+            value="<%= query %>">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-space-text opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <% posts.forEach(post => { %>
+        <div class="card-space rounded-xl overflow-hidden transform transition-all duration-300 hover:scale-105">
+          <a href="/post/<%= post._id %>" class="block">
+            <img src="/uploads/posts/<%= post.image %>" alt="<%= post.title %>" 
+              class="w-full h-48 object-cover">
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-space-text mb-2"><%= post.title %></h3>
+              <p class="text-space-text opacity-80 text-sm mb-3 line-clamp-2"><%= post.caption %></p>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <img src="/uploads/profiles/<%= post.user.profileImage %>" alt="<%= post.user.name %>" 
+                    class="w-6 h-6 rounded-full object-cover border border-space-primary">
+                  <span class="text-sm text-space-text"><%= post.user.name %></span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span class="text-sm text-space-text">
+                    <svg class="w-4 h-4 inline-block mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                    </svg>
+                    <%= post.likes.length %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- No Results Message -->
+    <% if (posts.length === 0) { %>
+      <div class="text-center py-12">
+        <h3 class="text-xl font-semibold text-space-text mb-2">No results found</h3>
+        <p class="text-space-text opacity-60">Try different keywords or browse all posts</p>
+        <a href="/" class="btn-space-primary inline-block mt-4 px-6 py-2 rounded-lg">
+          Browse All Posts
+        </a>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    // Create stars background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      const starCount = 100;
+
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Random position
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        
+        // Random size
+        const size = Math.random() * 2;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        
+        // Random animation duration
+        star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
+        
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // Initialize stars on page load
+    window.addEventListener('load', createStars);
+  </script>
+</body>
+</html> 
