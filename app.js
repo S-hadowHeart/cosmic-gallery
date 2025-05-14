@@ -9,24 +9,22 @@ const fs = require('fs');
 
 
 // Read .env content manually
-const envPath = '/etc/secrets/.env';
-if (fs.existsSync(envPath)) {
-  const envContent = fs.readFileSync(envPath).toString();
-  envContent.split('\n').forEach(line => {
-    const [key, value] = line.split('=');
-    if (key && value) {
-      process.env[key.trim()] = value.trim();
-    }
-  });
+const secretPath = '/etc/secrets/MONGODB_URI';
+
+let mongoURI = '';
+if (fs.existsSync(secretPath)) {
+  mongoURI = fs.readFileSync(secretPath, 'utf8').trim();
+} else {
+  console.error('MongoDB secret file not found!');
+  process.exit(1);
 }
 
-
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('Connected to MongoDB Atlas'))
-.catch(err => console.error('Could not connect to MongoDB:', err));
+.then(() => console.log('✅ Connected to MongoDB Atlas'))
+.catch(err => console.error('❌ Could not connect to MongoDB:', err));
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'public/uploads/profiles');
