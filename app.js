@@ -8,11 +8,14 @@ const flash = require('connect-flash');
 const fs = require('fs');
 
 // MongoDB Connection
-mongoose.connect('mongodb://localhost:27017/pinart', {
+const mongoose = require('mongoose');
+require('dotenv').config(); // Make sure you have dotenv if you're using a .env file
+
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('Connected to MongoDB'))
+.then(() => console.log('Connected to MongoDB Atlas'))
 .catch(err => console.error('Could not connect to MongoDB:', err));
 
 // Create uploads directory if it doesn't exist
