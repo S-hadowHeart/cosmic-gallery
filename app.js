@@ -6,7 +6,7 @@ var logger = require('morgan');
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const fs = require('fs');
-const path = require('path');
+
 
 // Read .env content manually
 const envPath = '/etc/secrets/.env';
