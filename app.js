@@ -7,8 +7,6 @@ const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const fs = require('fs');
 
-// MongoDB Connection
-const mongoose = require('mongoose');
 require('dotenv').config(); // Make sure you have dotenv if you're using a .env file
 
 mongoose.connect(process.env.MONGODB_URI, {
