@@ -2,105 +2,144 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Edit Post</title>
+  <title>Edit Post - Cosmic Gallery</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0a0a1a 0%, #1a1a40 60%, #2d1b4c 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .glass {
+      background: rgba(20, 20, 40, 0.7);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(8px);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="relative min-h-screen text-space-text">
+  <!-- Stars Background -->
+  <div id="stars" class="fixed inset-0 z-0"></div>
+
   <!-- Navigation -->
-  <nav class="bg-white shadow-md">
-    <div class="max-w-6xl mx-auto px-4">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center">
-          <a href="/" class="flex items-center">
-            <img src="/images/cosmic-gallery-logo.png" alt="Pinterest Logo" class="h-8 w-auto">
-          </a>
-        </div>
-        <div class="flex items-center space-x-4">
-          <a href="/profile/<%= user._id %>" class="text-gray-600 hover:text-gray-900">Back to Profile</a>
-          <a href="/logout" class="text-gray-600 hover:text-gray-900">Logout</a>
-        </div>
+  <nav class="nav-space glass sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="/" class="flex items-center gap-3">
+        <img src="/images/cosmic-gallery-logo.png" alt="Cosmic Gallery Logo" class="h-12 drop-shadow-lg animate-pulse">
+        <span class="text-2xl font-extrabold text-space-accent tracking-widest glow-text">COSMIC GALLERY</span>
+      </a>
+      <div class="flex items-center space-x-3">
+        <a href="/profile/<%= user._id %>" class="btn-space-secondary px-4 py-2 rounded-full flex items-center gap-2"><i class="fas fa-user"></i>Back to Profile</a>
+        <a href="/logout" class="btn-space-secondary px-4 py-2 rounded-full flex items-center gap-2"><i class="fas fa-sign-out-alt"></i>Exit Orbit</a>
       </div>
     </div>
   </nav>
 
-  <div class="max-w-3xl mx-auto py-10 px-4">
-    <div class="bg-white shadow-md rounded-2xl p-6">
-      <h1 class="text-2xl font-bold mb-6">Edit Post</h1>
+  <div class="max-w-3xl mx-auto py-12 px-4">
+    <div class="glass shadow-2xl rounded-2xl p-8 border border-space-primary">
+      <h1 class="text-3xl font-bold mb-8 text-space-accent flex items-center gap-2"><i class="fas fa-edit"></i>Edit Cosmic Post</h1>
 
-      <% if (messages.error) { %>
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          <%= messages.error %>
+      <% if (messages.error && ((typeof messages.error === 'string' && messages.error.trim()) || (Array.isArray(messages.error) && messages.error.length > 0))) { %>
+        <div class="bg-space-secondary bg-opacity-20 text-space-text p-4 rounded-lg mb-4 border border-space-secondary">
+          <i class="fas fa-exclamation-circle mr-2"></i>
+          <%= Array.isArray(messages.error) ? messages.error.join('<br>') : messages.error %>
         </div>
       <% } %>
 
-      <form action="/edit-post/<%= post._id %>" method="POST" enctype="multipart/form-data" class="space-y-6">
+      <form action="/edit-post/<%= post._id %>" method="POST" enctype="multipart/form-data" class="space-y-8">
         <!-- Current Image -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Current Image</label>
-          <img src="/uploads/posts/<%= post.image %>" alt="Current post image" class="max-h-64 rounded-lg">
+          <label class="block text-sm font-medium text-space-text mb-2">Current Image</label>
+          <img src="/uploads/posts/<%= post.image %>" alt="Current post image" class="max-h-64 rounded-lg border-2 border-space-accent">
         </div>
 
         <!-- New Image Upload -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">New Image (optional)</label>
-          <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg" id="dropZone">
+          <label class="block text-sm font-medium text-space-text mb-2">New Image (optional)</label>
+          <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-space-primary border-dashed rounded-lg" id="dropZone">
             <div class="space-y-1 text-center" id="uploadPrompt">
-              <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              <div class="flex text-sm text-gray-600">
-                <label for="image" class="relative cursor-pointer bg-white rounded-md font-medium text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500">
+              <i class="fas fa-cloud-upload-alt text-4xl text-space-accent"></i>
+              <div class="flex text-sm text-space-text">
+                <label for="image" class="relative cursor-pointer rounded-md font-medium text-space-accent hover:text-space-primary">
                   <span>Upload a new image</span>
                   <input id="image" name="image" type="file" class="sr-only" accept="image/*" onchange="previewImage(this)">
                 </label>
                 <p class="pl-1">or drag and drop</p>
               </div>
-              <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+              <p class="text-xs text-space-text opacity-60">PNG, JPG, GIF up to 10MB</p>
             </div>
             <div id="imagePreview" class="hidden">
-              <img id="preview" src="" alt="Preview" class="max-h-64 mx-auto">
-              <button type="button" onclick="removeImage()" class="mt-2 text-sm text-red-600 hover:text-red-500">Remove image</button>
+              <img id="preview" src="" alt="Preview" class="max-h-64 mx-auto rounded-lg border-2 border-space-accent">
+              <button type="button" onclick="removeImage()" class="mt-2 text-sm text-space-accent hover:text-space-primary">Remove image</button>
             </div>
           </div>
         </div>
 
         <!-- Title -->
         <div>
-          <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+          <label for="title" class="block text-sm font-medium text-space-text">Title</label>
           <input type="text" name="title" id="title" value="<%= post.title %>" required
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+            class="mt-1 block w-full rounded-lg input-space focus:outline-none focus:ring-2 focus:ring-space-primary">
         </div>
 
         <!-- Caption -->
         <div>
-          <label for="caption" class="block text-sm font-medium text-gray-700">Caption</label>
+          <label for="caption" class="block text-sm font-medium text-space-text">Caption</label>
           <textarea name="caption" id="caption" rows="3" required
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"><%= post.caption %></textarea>
+            class="mt-1 block w-full rounded-lg input-space focus:outline-none focus:ring-2 focus:ring-space-primary"><%= post.caption %></textarea>
         </div>
 
         <!-- Tags -->
         <div>
-          <label for="tags" class="block text-sm font-medium text-gray-700">Tags (comma separated)</label>
+          <label for="tags" class="block text-sm font-medium text-space-text">Tags (comma separated)</label>
           <input type="text" name="tags" id="tags" value="<%= post.tags.join(', ') %>" placeholder="e.g. art, design, inspiration"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
-          <p class="mt-1 text-sm text-gray-500">Add tags to help others find your post</p>
+            class="mt-1 block w-full rounded-lg input-space focus:outline-none focus:ring-2 focus:ring-space-primary">
+          <p class="mt-1 text-sm text-space-text opacity-60">Add tags to help others find your post</p>
         </div>
 
         <div class="flex justify-end space-x-4">
           <a href="/profile/<%= user._id %>" 
-            class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-            Cancel
+            class="btn-space-secondary px-6 py-2 rounded-full flex items-center gap-2">
+            <i class="fas fa-times"></i>Cancel
           </a>
           <button type="submit"
-            class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-            Update Post
+            class="btn-space-primary px-6 py-2 rounded-full flex items-center gap-2">
+            <i class="fas fa-save"></i>Update Post
           </button>
         </div>
       </form>
     </div>
   </div>
 
+  <footer class="px-6 py-6 text-center text-sm text-space-text opacity-60 relative z-10">
+    <p>&copy; 2025 Cosmic Gallery, Inc.</p>
+    <p class="mt-2 text-xs">A universe of inspiration awaits.</p>
+  </footer>
+
   <script>
+    // Create stars background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      const starCount = 100;
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        const size = Math.random() * 2.2 + 0.5;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
+        starsContainer.appendChild(star);
+      }
+    }
+    window.addEventListener('load', createStars);
+
+    // Image preview functionality
     function previewImage(input) {
       const preview = document.getElementById('preview');
       const uploadPrompt = document.getElementById('uploadPrompt');
@@ -152,11 +191,11 @@
     });
 
     function highlight(e) {
-      dropZone.classList.add('border-red-500');
+      dropZone.classList.add('border-space-accent');
     }
 
     function unhighlight(e) {
-      dropZone.classList.remove('border-red-500');
+      dropZone.classList.remove('border-space-accent');
     }
 
     dropZone.addEventListener('drop', handleDrop, false);
