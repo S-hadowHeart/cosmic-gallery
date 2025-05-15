@@ -67,6 +67,21 @@
       <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-space-accent opacity-80"></i>
     </form>
   </div>
+<div id="infoModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+  <div class="glass text-space-text border border-space-primary p-6 max-w-md w-full rounded-2xl shadow-2xl backdrop-blur-lg relative">
+    <h2 class="text-2xl font-extrabold text-space-accent mb-4 tracking-wide">🌠 Welcome, Stargazer!</h2>
+    <p class="text-sm text-space-text opacity-90 mb-6 leading-relaxed">
+      Just a little cosmic notice: I'm using a free server, which resets if inactive for too long.<br>
+      That means your stars (posts) might vanish by your next visit. 💫<br><br>
+      Thank you for being part of this galaxy.
+    </p>
+    <div class="flex justify-center">
+      <button onclick="closeModal()" class="bg-space-accent text-white px-6 py-2 rounded-full font-semibold hover:bg-space-primary transition-all duration-300 shadow-md">
+        Got it, Commander! 🚀
+      </button>
+    </div>
+  </div>
+</div>
 
   <!-- Posts Grid -->
   <main class="max-w-7xl mx-auto px-4 pb-16">
@@ -130,6 +145,17 @@
   </footer>
 
   <script>
+function closeModal() {
+    document.getElementById('infoModal').classList.add('hidden');
+    localStorage.setItem('cosmicGalleryPopupSeen', 'true');
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const seen = localStorage.getItem('cosmicGalleryPopupSeen');
+    if (!seen) {
+      document.getElementById('infoModal').classList.remove('hidden');
+    }
+  });
     // Create stars background
     function createStars() {
       const starsContainer = document.getElementById('stars');
