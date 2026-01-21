@@ -1,64 +1,101 @@
-# 🌌 StarNet
+# 🌌 Cosmic Gallery
 
-A cosmic social media platform built with Node.js and Express, where users can share and discover stellar content about space, astronomy, and the universe.
+A stunning Pinterest-inspired image gallery application with a cosmic space theme. Built with Node.js, Express, and MongoDB, this platform allows users to create, share, and organize visual content in a beautiful, immersive interface.
 
-![StarNet](https://img.shields.io/badge/StarNet-v1.0.0-purple?style=for-the-badge&logo=express)
-![Node.js](https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge&logo=node.js)
-![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?style=for-the-badge&logo=mongodb)
+## ✨ Features
 
-## 🚀 Features
+### 🎨 Core Functionality
+- **Image Upload & Management**: Upload and showcase your visual content with support for various image formats
+- **User Authentication**: Secure registration, login, and session management with bcrypt password hashing
+- **Post Creation**: Create posts with titles, captions, images, and tags
+- **Social Interaction**: Like and comment on posts from other users
+- **Search & Discovery**: Search posts by title, caption, or tags with advanced filtering
+- **Tag System**: Organize content with searchable tags and discover popular trends
 
-### Core Functionality
-- **User Authentication** - Secure signup, login, and logout with Passport.js
-- **Post Management** - Create, read, update, and delete posts
-- **Social Interactions** - Like posts, add comments, and follow/unfollow users
-- **Search & Discovery** - Explore posts by title, content, or tags
-- **User Profiles** - Customizable profiles with bios and profile pictures
-- **Real-time Feed** - Chronological and popularity-based post sorting
+### 👤 User Features
+- **Profile Management**: Customizable user profiles with bio and profile images
+- **Collections**: Create and organize posts into personal collections
+- **Privacy Controls**: Set collections as public or private
+- **Settings**: Manage account preferences and profile information
 
-### Advanced Features
-- **Tag System** - Organize content with searchable tags
-- **Image Support** - Embed cosmic images in posts
-- **Flash Messaging** - User-friendly notifications
-- **Responsive Design** - Mobile-first cosmic UI with Tailwind CSS
-- **Session Management** - Secure user sessions with cookies
+### 🎯 User Experience
+- **Responsive Design**: Fully responsive interface that works on all devices
+- **Cosmic Theme**: Beautiful space-themed design with animated star backgrounds
+- **Glass Morphism**: Modern UI with glass-like effects and smooth animations
+- **Real-time Updates**: Dynamic content loading and updates
 
-## 🛸 Tech Stack
+## 🛠️ Technology Stack
 
 ### Backend
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web framework
-- **MongoDB** - NoSQL database (MongoDB Atlas)
-- **Mongoose** - Object Data Modeling (ODM)
-- **Passport.js** - Authentication middleware
-- **bcrypt** - Password hashing
-- **express-session** - Session management
-- **connect-flash** - Flash messages
+- **Node.js**: JavaScript runtime environment
+- **Express.js**: Web application framework
+- **MongoDB**: NoSQL database for data storage
+- **Mongoose**: MongoDB object modeling for Node.js
+- **EJS**: Embedded JavaScript templating engine
+- **Multer**: Middleware for handling file uploads
+- **Bcrypt**: Password hashing for security
+- **Express Session**: Session management
+- **Connect Flash**: Flash messaging system
 
 ### Frontend
-- **EJS** - Embedded JavaScript templating
-- **Tailwind CSS** - Utility-first CSS framework
-- **Bootstrap 5** - UI components
-- **Google Fonts** (Orbitron, Inter) - Typography
+- **Tailwind CSS**: Utility-first CSS framework
+- **Font Awesome**: Icon library
+- **Custom CSS**: Space-themed styling with glass morphism effects
 
-### Development Tools
-- **Morgan** - HTTP request logger
-- **method-override** - HTTP method override
-- **cookie-parser** - Cookie parsing
+### File Structure
+```
+cosmic-gallery/
+├── app.js                 # Main application file
+├── bin/
+│   └── www               # Server startup script
+├── middleware/
+│   └── auth.js           # Authentication middleware
+├── models/
+│   ├── User.js           # User schema and model
+│   ├── Post.js           # Post schema and model
+│   ├── Collection.js     # Collection schema and model
+│   ├── Comment.js        # Comment schema and model
+│   └── Like.js           # Like schema and model
+├── routes/
+│   ├── index.js          # Home page and search routes
+│   └── users.js          # User-related routes
+├── views/
+│   ├── partials/         # Reusable view components
+│   ├── index.ejs         # Home page
+│   ├── login.ejs         # Login page
+│   ├── signup.ejs        # Registration page
+│   ├── profile.ejs       # User profile page
+│   ├── create-post.ejs   # Post creation page
+│   ├── edit-post.ejs     # Post editing page
+│   ├── post-details.ejs  # Individual post view
+│   ├── collections.ejs   # Collections page
+│   ├── collection-details.ejs # Collection details
+│   ├── search.ejs        # Search results page
+│   ├── settings.ejs      # User settings page
+│   └── error.ejs         # Error page
+├── public/
+│   ├── css/              # Custom stylesheets
+│   ├── uploads/          # User uploaded content
+│   │   ├── profiles/     # Profile images
+│   │   └── posts/        # Post images
+│   └── stylesheets/      # Additional styles
+├── package.json          # Dependencies and scripts
+└── package-lock.json     # Dependency lock file
+```
 
-## 🌠 Installation
+## 🚀 Installation & Setup
 
 ### Prerequisites
-- Node.js 18+ installed
-- MongoDB Atlas account (or local MongoDB)
+- Node.js (v14 or higher)
+- MongoDB (local or MongoDB Atlas)
 - Git
 
-### Setup Instructions
+### Installation Steps
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/StarNet.git
-   cd StarNet
+   git clone <repository-url>
+   cd cosmic-gallery-main
    ```
 
 2. **Install dependencies**
@@ -66,12 +103,11 @@ A cosmic social media platform built with Node.js and Express, where users can s
    npm install
    ```
 
-3. **Environment Configuration**
-   
-   Create a MongoDB secret file at `/etc/secrets/MONGODB_URI` (for production) or modify the connection in `app.js`:
-   ```javascript
-   const mongoURI = 'mongodb+srv://your-username:your-password@cluster.mongodb.net/starnet';
-   ```
+3. **Environment Setup**
+   - Create a MongoDB database
+   - Set up your MongoDB connection URI
+   - For production: Store your MongoDB URI in `/etc/secrets/MONGODB_URI`
+   - For development: Modify the connection in `app.js`
 
 4. **Start the application**
    ```bash
@@ -81,73 +117,22 @@ A cosmic social media platform built with Node.js and Express, where users can s
 5. **Access the application**
    Open your browser and navigate to `http://localhost:3000`
 
-## 🎯 Usage
+## 🔧 Configuration
 
-### Getting Started
-1. **Sign up** for a new account or **log in** if you already have one
-2. **Complete your profile** with a bio and profile picture
-3. **Create your first post** sharing cosmic content
-4. **Explore** other users' posts and engage with the community
+### Database Configuration
+The application connects to MongoDB using the connection URI specified in `/etc/secrets/MONGODB_URI`. For local development, you can modify the connection logic in `app.js`.
 
-### Key Actions
-- **Create Posts**: Share space-related content with images and tags
-- **Interact**: Like posts and leave cosmic echoes (comments)
-- **Connect**: Follow other commanders and build your network
-- **Discover**: Search for specific topics or browse popular content
-- **Profile Management**: Update your bio and profile information
+### File Upload Limits
+- **Profile Images**: 5MB maximum size
+- **Post Images**: 10MB maximum size
+- **Supported Formats**: All image formats (validated by MIME type)
 
-## 📁 Project Structure
+### Session Configuration
+- Sessions are stored in memory (for development)
+- Session secret: 'secret' (change for production)
+- Session timeout: Browser session
 
-```
-StarNet/
-├── bin/
-│   └── www                 # Server startup script
-├── middleware/
-│   └── index.js           # Custom middleware functions
-├── models/
-│   ├── User.js            # User schema and model
-│   └── Post.js            # Post schema and model
-├── routes/
-│   ├── auth.js            # Authentication routes
-│   ├── index.js           # Home page routes
-│   ├── posts.js           # Post CRUD routes
-│   └── users.js           # User-related routes
-├── views/
-│   ├── partials/          # Reusable view components
-│   ├── posts/             # Post-specific views
-│   └── *.ejs              # Main view templates
-├── public/
-│   ├── images/            # Static images
-│   └── stylesheets/       # CSS files
-├── app.js                 # Main application file
-├── package.json           # Dependencies and scripts
-└── README.md              # This file
-```
-
-## 🎨 Design System
-
-### Color Palette
-- **Galaxy** (#0a0a1a) - Deep space background
-- **Nebula** (#8b5cf6) - Primary purple accent
-- **Star Yellow** (#fbbf24) - Highlight and calls-to-action
-- **Star Text** (#e2e8f0) - Primary text color
-- **Cosmic Pink** (#ec4899) - Secondary accent
-- **Deep** (#1e1b4b) - Card backgrounds
-
-### Typography
-- **Orbitron** - Space-themed display font
-- **Inter** - Clean, readable body text
-
-## 🔐 Security Features
-
-- **Password Hashing** - bcrypt for secure password storage
-- **Session Security** - HTTP-only cookies with expiration
-- **Authentication Middleware** - Route protection
-- **Input Validation** - Server-side validation for all forms
-- **CSRF Protection** - Built-in Express security
-- **Authorization Checks** - User permissions for post operations
-
-## 🌟 API Endpoints
+## 📚 API Endpoints
 
 ### Authentication
 - `GET /login` - Login page
@@ -157,63 +142,85 @@ StarNet/
 - `GET /logout` - Logout user
 
 ### Posts
-- `GET /posts` - Display all posts
-- `GET /posts/new` - New post form
-- `POST /posts` - Create new post
-- `GET /posts/:id` - View single post
-- `GET /posts/:id/edit` - Edit post form
-- `PUT /posts/:id` - Update post
-- `DELETE /posts/:id` - Delete post
-- `POST /posts/:id/like` - Like/unlike post
-- `POST /posts/:id/comments` - Add comment
-- `DELETE /posts/:id/comments/:commentId` - Delete comment
+- `GET /` - Home page with posts feed
+- `GET /post/create` - Create new post page
+- `POST /post/create` - Submit new post
+- `GET /post/:id/edit` - Edit post page
+- `POST /post/:id/edit` - Update post
+- `POST /post/:id/delete` - Delete post
+- `GET /post/:id` - View post details
+- `POST /post/:id/like` - Like/unlike post
+- `POST /post/:id/comment` - Add comment to post
 
-### Users
+### User Profile
 - `GET /profile/:id` - View user profile
-- `PUT /profile/:id` - Update user profile
-- `POST /follow/:id` - Follow/unfollow user
+- `GET /profile/:id/edit` - Edit profile page
+- `POST /profile/:id/edit` - Update profile
+- `GET /settings` - User settings page
 
-### Discovery
-- `GET /explore` - Explore posts with search and sorting
+### Collections
+- `GET /collections` - View all collections
+- `GET /collection/:id` - View collection details
+- `POST /collection/create` - Create new collection
+- `POST /collection/:id/add-post` - Add post to collection
+
+### Search
+- `GET /search` - Search page
+- `GET /?q=query` - Search posts with query
+- `GET /?tag=tagname` - Filter posts by tag
+
+## 🎨 Design System
+
+### Color Palette
+- **Primary**: Deep space blues and purples
+- **Background**: Gradient from dark blue to purple
+- **Glass Effect**: Semi-transparent overlays with blur
+- **Text**: Light colors for contrast against dark theme
+
+### UI Components
+- **Navigation**: Sticky glass-morphism header
+- **Cards**: Glass-effect post cards with hover animations
+- **Buttons**: Smooth transitions and hover states
+- **Forms**: Clean, modern input fields with validation
+- **Modals**: Overlay dialogs for interactions
+
+## 🔒 Security Features
+
+- **Password Hashing**: All passwords are hashed using bcrypt
+- **Session Management**: Secure session handling
+- **File Upload Validation**: MIME type checking and size limits
+- **Input Sanitization**: Protection against XSS attacks
+- **Authentication Middleware**: Protected routes for logged-in users
 
 ## 🚀 Deployment
 
 ### Environment Variables
-- `PORT` - Server port (default: 3000)
-- `MONGODB_URI` - MongoDB connection string
+For production deployment, ensure the following:
+- MongoDB connection URI is securely stored
+- Session secret is changed from default
+- File upload directories have proper permissions
+- Error handling is configured for production
 
-### Production Considerations
-- Use MongoDB Atlas for production database
-- Set up proper environment variable management
-- Configure reverse proxy (nginx/Apache)
-- Enable HTTPS with SSL certificates
-- Set up process monitoring (PM2, forever)
+### Recommended Hosting
+- **Backend**: Heroku, DigitalOcean, or AWS
+- **Database**: MongoDB Atlas for cloud hosting
+- **Static Files**: CDN for uploaded content
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/CosmicFeature`)
-3. Commit your changes (`git commit -am 'Add new cosmic feature'`)
-4. Push to the branch (`git push origin feature/CosmicFeature`)
-5. Create a Pull Request
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
 
 ## 🙏 Acknowledgments
 
-- **Express.js** - For the robust web framework
-- **MongoDB** - For the powerful database solution
-- **Tailwind CSS** - For the amazing utility-first CSS framework
-- **Passport.js** - For the authentication solution
-- **Space Community** - For inspiring the cosmic theme
-
-## 📞 Support
-
-If you encounter any issues or have questions, please:
-- Open an issue on GitHub
-- Contact the development team
-- Check the documentation
+- Inspired by Pinterest's grid layout and user experience
+- Built with modern web technologies and best practices
+- Cosmic theme designed for an immersive visual experience
 
 ---
 
-**Made with ❤️ and cosmic energy by the StarNet team**
-
-*"Ad astra per aspera" - Through hardships to the stars* 🌟
+**Created with ❤️ and a touch of cosmic magic** ✨🌌
